@@ -1,0 +1,117 @@
+
+#notes-app-container {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: auto;
+}
+
+.notes-menu {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 0 20px;
+    display: flex;
+}
+
+.notes-header {
+    border: none;
+    margin-right: auto;
+    float: left;
+    max-width: 300px;
+}
+
+.notes-header h1 {
+    color: #333;
+    font-size: 20px;
+    margin: 0;
+}
+
+.menu-buttons {
+    margin-left: auto;
+}
+
+.import-button,
+.export-button,
+.add-button {
+    /* padding: 4px 12px;  */
+    background-color: #b7b7b7;
+    color: #ffffff;
+    border: 1px solid #b7b7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    max-width: 50px;
+    margin-left: 1px;
+}
+
+.import-button:hover,
+.export-button:hover,
+.add-button:hover {
+    background-color: #6e6e6e;
+}
+
+
+.notes-list {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 0px;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.note {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+}
+
+.note-date { 
+    background-color: #b7b7b7;
+    color: #ffffff;
+    border: 1px solid #b7b7b7;
+    border-radius: 4px;
+    cursor: pointer;
+    max-width: 100px;
+    margin-left: 1px;
+    font-size: 14px;
+}
+
+.note h2 {
+    color: #333;
+    font-size: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.note p {
+    color: #666;
+    font-size: 10px;
+    margin-top: 1px;
+    margin-bottom: 1px;
+}
+
+.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.fade-truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    position: relative;
+}
+
+.fade-truncate::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+}
