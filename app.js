@@ -6,7 +6,6 @@ async function appApplicationName(containerId, applicationName) {
 
     const ST_KEYS = {
         USER_DATA: 'user_data',
-        SETTINGS: 'settings',
         NOTES: 'notes',
     };
 
@@ -66,6 +65,7 @@ async function appApplicationName(containerId, applicationName) {
             });
         }
     };
+    
     const SessionStorageWrapper = {
         prefix: appName + '.',
 
@@ -108,20 +108,18 @@ async function appApplicationName(containerId, applicationName) {
 
     // TODO Temp
     const tempNotes = [
-        { id: 1, title: "Note 1", content: "Content of note 1", date: new Date()},
+        { id: 1, title: "Note 1", content: "Content of note 1", date: "2024-03-14" },
         { id: 2, title: "Note 2", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat rutrum ullamcorper. Orci varius natoque penatibus end ", date: new Date() }
     ];
-
     LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(tempNotes));
 
     userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
-    if (!userData) {
+    if (!userData || !userData.lastNoteId) {
         displayNotesScreen();
     } else {
         lastNoteId = userData.lastNoteId;
         displayNoteScreen(lastNoteId);
     }
-
 
     async function displayNotesScreen() {
         container.innerHTML = '';
@@ -140,7 +138,7 @@ async function appApplicationName(containerId, applicationName) {
             const noteListItem = document.createElement('div');
             noteListItem.className = 'note';
             noteListItem.classList.add('fade-truncate');
-            // noteListItem.addEventListener('click', displayNoteScreen(note.id));
+            noteListItem.addEventListener('click', () => displayNoteScreen(note.id));
             noteListItem.innerHTML = `<h2>${note.title}</h2><p>${note.content}</p>`
             notesList.appendChild(noteListItem);
         });
@@ -152,11 +150,56 @@ async function appApplicationName(containerId, applicationName) {
         container.innerHTML = '';
 
         const notes = JSON.parse(LocalStorageWrapper.getItem('notes')) || [];
-      
+
         const note = notes.find(note => note.id === noteId);
+        if (!note) {
+            displayNotesScreen();
+            return;
+        }
+        saveLastScreen(noteId)
 
         displayNoteMenu(note);
-        // displayNote(note)
+        displayNote(note)
+    }
+
+    async function saveLastScreen(noteId) {
+        let userData = LocalStorageWrapper.getItem(ST_KEYS.USER_DATA);
+        if (!userData) {
+            userData = {};
+        }
+        userData.lastNoteId = noteId;
+        LocalStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
+    }
+
+    async function displayNote(note) {
+        // TODO Add div LOW
+        const noteContent = document.createElement('textarea');
+        noteContent.classList.add('note-textarea');
+        noteContent.textContent = note.content;
+        noteContent.addEventListener('keydown', function (event) {
+            if (event.shiftKey && event.key === 'Enter') {
+                event.preventDefault();
+                // var noteText = this.value;
+                note.content = this.value;
+                saveNoteByID(note)
+            }
+        })
+        container.appendChild(noteContent);
+    }
+
+    function saveNoteByID(note) {
+        if (note) {
+            const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
+            const index = notes.findIndex(item => item.id === note.id);
+            if (index !== -1) {
+                notes[index] = note;
+                LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(notes));
+            } else {
+                console.error('Note with ID ' + note.id + ' not found in localStorage.');
+            }
+        } else {
+            console.error('undefined note can\'t be saved')
+        }
     }
 
     async function displayNoteMenu(note) {
@@ -174,6 +217,7 @@ async function appApplicationName(containerId, applicationName) {
         buttonsParent.innerHTML = ''
         menuParent.appendChild(buttonsParent);
 
+        displayReturnButton(buttonsParent);
         displayDate(buttonsParent, note.date);
         // displayExportButton(buttonsParent);
         // displayImportButton(buttonsParent);
@@ -185,6 +229,23 @@ async function appApplicationName(containerId, applicationName) {
         notesDate.textContent = date
         // notesDate.innerHTML = `<p>${date}</p>`
         parent.appendChild(notesDate);
+    }
+
+    async function displayReturnButton(parent) {
+        const returnButton = document.createElement('button');
+        returnButton.textContent = '<<';
+        returnButton.className = 'return-button';
+        returnButton.addEventListener('click', returnToMainScreen);
+        parent.appendChild(returnButton);
+    }
+
+    function returnToMainScreen() {
+        let userData = LocalStorageWrapper.getItem(ST_KEYS.USER_DATA);
+        if (userData) {
+            userData.lastNoteId = null;
+            LocalStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
+        }
+        displayNotesScreen()
     }
 
     async function displayMainMenu() {
@@ -222,7 +283,7 @@ async function appApplicationName(containerId, applicationName) {
         // const notesHeader = document.querySelector('.notes-menu');
         parent.appendChild(importButton);
     }
-    
+
     async function importNotes() {
         // Your import functionality here
         alert('TODO Importing notes...');
@@ -233,15 +294,14 @@ async function appApplicationName(containerId, applicationName) {
         exportButton.textContent = 'export';
         exportButton.className = 'export-button';
         exportButton.addEventListener('click', exportNotes);
-        // const notesHeader = document.querySelector('.notes-menu');
         parent.appendChild(exportButton);
     }
-    
+
     async function exportNotes() {
         // Your export functionality here
         alert('TODO Exporting notes...');
     }
-    
+
     async function displayAddNoteButton(parent) {
         const addNoteButton = document.createElement('button');
         addNoteButton.textContent = 'add';
@@ -249,7 +309,7 @@ async function appApplicationName(containerId, applicationName) {
         addNoteButton.addEventListener('click', addNote);
         parent.appendChild(addNoteButton);
     }
-    
+
     async function addNote() {
         // Your export functionality here
         alert('TODO adding notes...');
