@@ -8,7 +8,6 @@ async function appApplicationName(containerId, applicationName) {
         USER_DATA: 'user_data',
         NOTES: 'notes',
     };
-
     // Проверки
 
     // код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
@@ -106,11 +105,13 @@ async function appApplicationName(containerId, applicationName) {
         return
     }
 
-    // TODO Temp
-    // const startNotes = [
-    //     { id: 1, title: "Welcome!", content: "This is SimpleNotes extension", date: new Date(), changedAt: new Date},
-    // ];
-    // LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(startNotes));
+    const startNotes = [
+        { id: 1, title: "Welcome!", content: "This is SimpleNotes extension", date: new Date(), changedAt: new Date},
+    ];
+    
+    if (!LocalStorageWrapper.getItem(ST_KEYS.NOTES)) {
+        LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(startNotes));
+    }
 
     userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
     if (!userData || !userData.lastNoteId) {
