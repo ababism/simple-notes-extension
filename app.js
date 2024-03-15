@@ -107,11 +107,10 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     // TODO Temp
-    // const tempNotes = [
-    //     { id: 1, title: "Note 1", content: "Content of note 1", date: new Date() },
-    //     { id: 2, title: "Note 2", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat rutrum ullamcorper. Orci varius natoque penatibus end ", date: new Date() }
+    // const startNotes = [
+    //     { id: 1, title: "Welcome!", content: "This is SimpleNotes extension", date: new Date(), changedAt: new Date},
     // ];
-    // LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(tempNotes));
+    // LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(startNotes));
 
     userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
     if (!userData || !userData.lastNoteId) {
@@ -129,11 +128,11 @@ async function appApplicationName(containerId, applicationName) {
         const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
         // sync end
 
-        // Create notes list element
+        notes.sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt));
+
         const notesList = document.createElement('ul');
         notesList.classList.add('notes-list');
 
-        // Loop through notes and create list items
         notes.forEach((note, index) => {
             const noteListItem = document.createElement('div');
             noteListItem.className = 'note';
@@ -172,15 +171,14 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     async function displayNote(note) {
-        // TODO Add div LOW
         const noteContent = document.createElement('textarea');
         noteContent.classList.add('note-textarea');
         noteContent.textContent = note.content;
         noteContent.addEventListener('keydown', function (event) {
             if (event.shiftKey && event.key === 'Enter') {
                 event.preventDefault();
-                // var noteText = this.value;
                 note.content = this.value;
+                note.changedAt = new Date();
                 saveNoteByID(note)
             }
         })
@@ -208,7 +206,6 @@ async function appApplicationName(containerId, applicationName) {
         menuParent.innerHTML = ''
         container.appendChild(menuParent);
 
-        // note = JSON.parse(noteObj)
         // async
         displayAppHeader(menuParent, `<h1>${note.title}</h1>`);
 
@@ -220,8 +217,6 @@ async function appApplicationName(containerId, applicationName) {
         displayReturnButton(buttonsParent);
         displayDeleteButton(buttonsParent, note);
         displayDate(buttonsParent, note.date);
-        // displayExportButton(buttonsParent);
-        // displayImportButton(buttonsParent);
     }
 
     async function displayDate(parent, date) {
@@ -314,7 +309,6 @@ async function appApplicationName(containerId, applicationName) {
         importButton.textContent = 'Import';
         importButton.className = 'import-button';
         importButton.addEventListener('click', importNotes);
-        // const notesHeader = document.querySelector('.notes-menu');
         parent.appendChild(importButton);
     }
 
@@ -385,7 +379,8 @@ async function appApplicationName(containerId, applicationName) {
             id: newId,
             title: title,
             content: "",
-            date: new Date()
+            date: new Date(),
+            changedAt: new Date()
         };
 
         existingNotes.push(newNote);
