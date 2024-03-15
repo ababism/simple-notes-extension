@@ -265,7 +265,7 @@ async function appApplicationName(containerId, applicationName) {
 
         LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(updatedNotes));
 
-        displayNotesScreen();
+        returnToMainScreen();
     }
 
     function returnToMainScreen() {
@@ -313,8 +313,54 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     async function importNotes() {
-        // Your import functionality here
-        alert('TODO Importing notes...');
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = handleFileInputChange;
+        input.click();
+    }
+
+    function handleFileInputChange(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+    
+        const reader = new FileReader();
+        // react to event after file will be read
+        reader.onload = function(event) {
+            const importedNotes = event.target.result;
+            try {
+                const parsedNotes = JSON.parse(importedNotes);
+                if (!isValidNotesFormat(parsedNotes)) {
+                    alert('Error importing notes. Invalid or outdated notes format.');
+                    return;
+                }
+                
+                LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(parsedNotes));
+                alert('Notes imported successfully!');
+            } catch (error) {
+                alert('Error importing notes. Invalid JSON.');
+            }
+            returnToMainScreen();
+        };
+        reader.readAsText(file);
+    }
+
+    function isValidNotesFormat(notes) {
+        if (!Array.isArray(notes)) {
+            return false;
+        }
+        for (const note of notes) {
+            if (
+                typeof note.id !== 'number' ||
+                typeof note.title !== 'string' ||
+                typeof note.content !== 'string' ||
+                isNaN(Date.parse(note.date)) ||
+                isNaN(Date.parse(note.changedAt))
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 
     async function displayExportButton(parent) {
