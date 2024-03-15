@@ -227,9 +227,24 @@ async function appApplicationName(containerId, applicationName) {
     async function displayDate(parent, date) {
         const notesDate = document.createElement('div');
         notesDate.className = 'note-date';
-        notesDate.textContent = date
-        // notesDate.innerHTML = `<p>${date}</p>`
+
+        const formattedDate = formatDate(date);
+        notesDate.textContent = formattedDate;
+     
         parent.appendChild(notesDate);
+    }
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const options = {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: false      // 24-часовой вид
+        };
+        return date.toLocaleString('ru-RU', options);
     }
 
     async function displayReturnButton(parent) {
