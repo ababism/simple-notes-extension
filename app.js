@@ -218,6 +218,7 @@ async function appApplicationName(containerId, applicationName) {
         menuParent.appendChild(buttonsParent);
 
         displayReturnButton(buttonsParent);
+        displayDeleteButton(buttonsParent, note);
         displayDate(buttonsParent, note.date);
         // displayExportButton(buttonsParent);
         // displayImportButton(buttonsParent);
@@ -237,6 +238,24 @@ async function appApplicationName(containerId, applicationName) {
         returnButton.className = 'return-button';
         returnButton.addEventListener('click', returnToMainScreen);
         parent.appendChild(returnButton);
+    }
+
+    async function displayDeleteButton(parent, note) {
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'delete-button';
+        deleteButton.addEventListener('click', () => deleteNote(note.id));
+        parent.appendChild(deleteButton);
+    }
+
+    function deleteNote(noteId) {
+        const existingNotes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES) || "[]");
+
+        const updatedNotes = existingNotes.filter(note => note.id !== noteId);
+
+        LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(updatedNotes));
+
+        displayNotesScreen();
     }
 
     function returnToMainScreen() {
@@ -317,7 +336,7 @@ async function appApplicationName(containerId, applicationName) {
             return;
         }
 
-        const existingNotes = JSON.parse(LocalStorageWrapper.getItem("notes") || "[]");
+        const existingNotes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES) || "[]");
 
         if (existingNotes.some(note => note.title === title)) {
             alert("Note with this title already exists.");
@@ -338,9 +357,9 @@ async function appApplicationName(containerId, applicationName) {
         };
 
         existingNotes.push(newNote);
-        await LocalStorageWrapper.setItem("notes", JSON.stringify(existingNotes));
+        await LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(existingNotes));
         // displayNotesScreen();
-        alert("Note added successfully!");
+        // alert("Note added successfully!");
         displayNoteScreen(newNote.id);
     }
 }

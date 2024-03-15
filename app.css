@@ -35,7 +35,8 @@
 .import-button,
 .export-button,
 .add-button,
-.return-button {
+.return-button,
+.delete-button {
     /* padding: 4px 12px;  */
     background-color: #b7b7b7;
     color: #ffffff;
@@ -49,10 +50,10 @@
 .import-button:hover,
 .export-button:hover,
 .add-button:hover,
-.return-button::hover {
+.return-button::hover,
+.delete-button::hover {
     background-color: #6e6e6e;
 }
-
 
 .notes-list {
     background-color: #f9f9f9;
