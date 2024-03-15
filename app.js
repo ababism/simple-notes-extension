@@ -65,7 +65,7 @@ async function appApplicationName(containerId, applicationName) {
             });
         }
     };
-    
+
     const SessionStorageWrapper = {
         prefix: appName + '.',
 
@@ -107,11 +107,11 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     // TODO Temp
-    const tempNotes = [
-        { id: 1, title: "Note 1", content: "Content of note 1", date: "2024-03-14" },
-        { id: 2, title: "Note 2", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat rutrum ullamcorper. Orci varius natoque penatibus end ", date: new Date() }
-    ];
-    LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(tempNotes));
+    // const tempNotes = [
+    //     { id: 1, title: "Note 1", content: "Content of note 1", date: new Date() },
+    //     { id: 2, title: "Note 2", content: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce feugiat rutrum ullamcorper. Orci varius natoque penatibus end ", date: new Date() }
+    // ];
+    // LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(tempNotes));
 
     userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
     if (!userData || !userData.lastNoteId) {
@@ -163,12 +163,12 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     async function saveLastScreen(noteId) {
-        let userData = LocalStorageWrapper.getItem(ST_KEYS.USER_DATA);
+        let userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
         if (!userData) {
             userData = {};
         }
         userData.lastNoteId = noteId;
-        LocalStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
+        SessionStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
     }
 
     async function displayNote(note) {
@@ -240,10 +240,10 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     function returnToMainScreen() {
-        let userData = LocalStorageWrapper.getItem(ST_KEYS.USER_DATA);
+        let userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
         if (userData) {
             userData.lastNoteId = null;
-            LocalStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
+            SessionStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
         }
         displayNotesScreen()
     }
@@ -311,7 +311,36 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     async function addNote() {
-        // Your export functionality here
-        alert('TODO adding notes...');
+        const title = prompt("Enter note title:");
+        if (!title.trim()) {
+            alert("Note title cannot be empty.");
+            return;
+        }
+
+        const existingNotes = JSON.parse(LocalStorageWrapper.getItem("notes") || "[]");
+
+        if (existingNotes.some(note => note.title === title)) {
+            alert("Note with this title already exists.");
+            return;
+        }
+
+        let newId = 1;
+        if (existingNotes.length > 0) {
+            const lastNote = existingNotes[existingNotes.length - 1];
+            newId = lastNote.id + 1;
+        }
+
+        const newNote = {
+            id: newId,
+            title: title,
+            content: "",
+            date: new Date()
+        };
+
+        existingNotes.push(newNote);
+        await LocalStorageWrapper.setItem("notes", JSON.stringify(existingNotes));
+        // displayNotesScreen();
+        alert("Note added successfully!");
+        displayNoteScreen(newNote.id);
     }
 }
