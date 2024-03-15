@@ -317,8 +317,25 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     async function exportNotes() {
-        // Your export functionality here
-        alert('TODO Exporting notes...');
+        const notesData = LocalStorageWrapper.getItem(ST_KEYS.NOTES);
+
+        if (!notesData) {
+            alert("No notes to export.");
+            return;
+        }
+
+        const notesBlob = new Blob([notesData], { type: "application/json" });
+        const objectUrl = URL.createObjectURL(notesBlob);
+
+        const a = document.createElement("a");
+        a.href = objectUrl;
+        a.download = "notes.json";
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(objectUrl);
+        alert("Notes exported successfully")
     }
 
     async function displayAddNoteButton(parent) {
