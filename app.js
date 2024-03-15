@@ -106,7 +106,11 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     const startNotes = [
-        { id: 1, title: "Welcome!", content: "This is SimpleNotes extension", date: new Date(), changedAt: new Date},
+        { id: 1, 
+        title: "Welcome!", 
+        content: "This is SimpleNotes extension. Easily create, edit, and manage your notes directly in your browser. \n\nKey features for you:\n- Add and modify your notes quickly and effortlessly.\n- Backup your notes by exporting them or import from other sources.\n- Find note that you need with a simple search function.\n\n We care about your privacy! All your data stored locally, and won't be accessible online", 
+        date: new Date(), 
+        changedAt: new Date},
     ];
     
     if (!LocalStorageWrapper.getItem(ST_KEYS.NOTES)) {
