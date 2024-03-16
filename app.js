@@ -2,15 +2,14 @@ async function appApplicationName(containerId, applicationName) {
 
     // инициализация главных переменных
     const container = document.getElementById(containerId);
-    const appName = appApplicationName ? appApplicationName : "simple-notes-app"
+    const appName = appApplicationName ? appApplicationName : 'simple-notes-app'
 
     const ST_KEYS = {
         USER_DATA: 'user_data',
         NOTES: 'notes',
     };
-    // Проверки
 
-    // код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
+    // Код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
     function storageAvailable(type) {
         let storage;
         try {
@@ -38,7 +37,7 @@ async function appApplicationName(containerId, applicationName) {
         }
     }
 
-    // Вспомогательные функции
+    // Вспомогательные функции и объекты
     const LocalStorageWrapper = {
         prefix: appName + '.',
 
@@ -91,7 +90,7 @@ async function appApplicationName(containerId, applicationName) {
         }
     };
 
-    // Сам код
+    // Основной код
     if (!container) {
         console.error("Элемент (контейнер для встройки) с id", containerId, "не найден.");
         return
@@ -131,9 +130,7 @@ async function appApplicationName(containerId, applicationName) {
         container.innerHTML = '';
         displayMainMenu();
 
-        // sync
         const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
-        // sync end
 
         notes.sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt));
 
@@ -214,7 +211,6 @@ async function appApplicationName(containerId, applicationName) {
         menuParent.innerHTML = ''
         container.appendChild(menuParent);
 
-        // async
         displayAppHeader(menuParent, `<h1>${note.title}</h1>`);
 
         const buttonsParent = document.createElement('div');
@@ -291,7 +287,6 @@ async function appApplicationName(containerId, applicationName) {
         menuParent.innerHTML = ''
         container.appendChild(menuParent);
 
-        // async
         displayAppHeader(menuParent, `<h1>Simple notes</h1>`);
 
         displaySearchBar(container);
@@ -477,8 +472,6 @@ async function appApplicationName(containerId, applicationName) {
 
         existingNotes.push(newNote);
         await LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(existingNotes));
-        // displayNotesScreen();
-        // alert("Note added successfully!");
         displayNoteScreen(newNote.id);
     }
 }
