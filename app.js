@@ -106,13 +106,15 @@ async function appApplicationName(containerId, applicationName) {
     }
 
     const startNotes = [
-        { id: 1, 
-        title: "Welcome!", 
-        content: "This is SimpleNotes extension. Easily create, edit, and manage your notes directly in your browser. \n\nKey features for you:\n- Add and modify your notes quickly and effortlessly.\n- Backup your notes by exporting them or import from other sources.\n- Find note that you need with a simple search function.\n\n We care about your privacy! All your data stored locally, and won't be accessible online", 
-        date: new Date(), 
-        changedAt: new Date},
+        {
+            id: 1,
+            title: "Welcome!",
+            content: "This is SimpleNotes extension. Easily create, edit, and manage your notes directly in your browser. \n\nKey features for you:\n- Add and modify your notes quickly and effortlessly.\n- Backup your notes by exporting them or import from other sources.\n- Find note that you need with a simple search function.\n\n We care about your privacy! All your data stored locally, and won't be accessible online",
+            date: new Date(),
+            changedAt: new Date
+        },
     ];
-    
+
     if (!LocalStorageWrapper.getItem(ST_KEYS.NOTES)) {
         LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(startNotes));
     }
@@ -136,7 +138,8 @@ async function appApplicationName(containerId, applicationName) {
         notes.sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt));
 
         const notesList = document.createElement('ul');
-        notesList.classList.add('notes-list');
+        notesList.className = ('notes-list');
+        notesList.id = "notes-list"
 
         notes.forEach((note, index) => {
             const noteListItem = document.createElement('div');
@@ -230,7 +233,7 @@ async function appApplicationName(containerId, applicationName) {
 
         const formattedDate = formatDate(date);
         notesDate.textContent = formattedDate;
-     
+
         parent.appendChild(notesDate);
     }
 
@@ -291,6 +294,8 @@ async function appApplicationName(containerId, applicationName) {
         // async
         displayAppHeader(menuParent, `<h1>Simple notes</h1>`);
 
+        displaySearchBar(container);
+
         const buttonsParent = document.createElement('div');
         buttonsParent.className = 'menu-buttons';
         buttonsParent.innerHTML = ''
@@ -300,6 +305,42 @@ async function appApplicationName(containerId, applicationName) {
         displayExportButton(buttonsParent);
         displayImportButton(buttonsParent);
 
+    }
+
+    async function displaySearchBar(parent) {
+        const searchBar = document.createElement('input');
+        searchBar.type = 'text';
+        searchBar.className = 'search';
+        searchBar.placeholder = 'Search';
+        parent.appendChild(searchBar);
+
+        searchBar.addEventListener('input', () => {
+            const searchValue = searchBar.value.toLowerCase();
+            filterUpdateNotesList(searchValue);
+        });
+    }
+
+    async function filterUpdateNotesList(TSQuery) {
+        const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
+
+        const filteredNotes = notes.filter(note =>
+            note.title.toLowerCase().includes(TSQuery)
+        );
+
+        filteredNotes.sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt));
+
+        const notesList = document.getElementById('notes-list');
+
+        notesList.innerHTML = '';
+
+        filteredNotes.forEach((note, index) => {
+            const noteListItem = document.createElement('div');
+            noteListItem.className = 'note';
+            noteListItem.classList.add('fade-truncate');
+            noteListItem.addEventListener('click', () => displayNoteScreen(note.id));
+            noteListItem.innerHTML = `<h2>${note.title}</h2><p>${note.content}</p>`
+            notesList.appendChild(noteListItem);
+        });
     }
 
     async function displayAppHeader(parent, htmlCode) {
@@ -328,10 +369,10 @@ async function appApplicationName(containerId, applicationName) {
     function handleFileInputChange(event) {
         const file = event.target.files[0];
         if (!file) return;
-    
+
         const reader = new FileReader();
         // react to event after file will be read
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             const importedNotes = event.target.result;
             try {
                 const parsedNotes = JSON.parse(importedNotes);
@@ -339,7 +380,7 @@ async function appApplicationName(containerId, applicationName) {
                     alert('Error importing notes. Invalid or outdated notes format.');
                     return;
                 }
-                
+
                 LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(parsedNotes));
                 alert('Notes imported successfully!');
             } catch (error) {

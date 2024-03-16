@@ -72,6 +72,10 @@
     padding: 5px;
 }
 
+.search {
+   width: 99%;
+}
+
 .note-date { 
     background-color: #b7b7b7;
     color: #ffffff;
