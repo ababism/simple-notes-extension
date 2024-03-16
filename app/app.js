@@ -9,6 +9,7 @@ async function appApplicationName(containerId, applicationName) {
         NOTES: 'notes',
     };
 
+
     // Код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
     function storageAvailable(type) {
         let storage;
@@ -126,6 +127,9 @@ async function appApplicationName(containerId, applicationName) {
         displayNoteScreen(lastNoteId);
     }
 
+    /**
+     * Displays main screen with notes.
+     */
     async function displayNotesScreen() {
         container.innerHTML = '';
         displayMainMenu();
@@ -150,6 +154,10 @@ async function appApplicationName(containerId, applicationName) {
         container.appendChild(notesList);
     }
 
+    /**
+     * Displays screen with viewing and editing note.
+     * @param {number} noteId - ID of the note to be displayed.
+     */
     async function displayNoteScreen(noteId) {
         container.innerHTML = '';
 
@@ -166,6 +174,10 @@ async function appApplicationName(containerId, applicationName) {
         displayNote(note)
     }
 
+    /**
+     * Saves currently open note to user session.
+     * @param {number} noteId - ID of the note to be saved.
+     */
     async function saveLastScreen(noteId) {
         let userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
         if (!userData) {
@@ -175,6 +187,10 @@ async function appApplicationName(containerId, applicationName) {
         SessionStorageWrapper.setItem(ST_KEYS.USER_DATA, userData);
     }
 
+    /**
+     * Displays note into container.
+     * @param {Object} note - note to be displayed.
+     */
     async function displayNote(note) {
         const noteContent = document.createElement('textarea');
         noteContent.classList.add('note-textarea');
@@ -190,6 +206,10 @@ async function appApplicationName(containerId, applicationName) {
         container.appendChild(noteContent);
     }
 
+    /**
+     * Save note to storage.
+     * @param {Object} note - note to be saved.
+     */
     function saveNoteByID(note) {
         if (note) {
             const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
@@ -205,6 +225,10 @@ async function appApplicationName(containerId, applicationName) {
         }
     }
 
+    /**
+     * Displays top menu for note view screen.
+     * @param {Object} note - note for title and information.
+     */
     async function displayNoteMenu(note) {
         const menuParent = document.createElement('div');
         menuParent.className = 'notes-menu';
@@ -223,6 +247,11 @@ async function appApplicationName(containerId, applicationName) {
         displayDate(buttonsParent, note.date);
     }
 
+    /**
+    * Displays date in the correct format.
+    * @param {HTMLElement} parent - parent element.
+    * @param {Date} date - timestamp.
+    */
     async function displayDate(parent, date) {
         const notesDate = document.createElement('div');
         notesDate.className = 'note-date';
@@ -233,6 +262,10 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(notesDate);
     }
 
+    /**
+     * Formats date timestamp rounded to minutes.
+     * @param {string} dateString - timestamp.
+     */
     function formatDate(dateString) {
         const date = new Date(dateString);
         const options = {
@@ -246,6 +279,10 @@ async function appApplicationName(containerId, applicationName) {
         return date.toLocaleString('ru-RU', options);
     }
 
+    /**
+     * Displays button to return to main screen.
+     * @param {HTMLElement} parent - parent element.
+     */
     async function displayReturnButton(parent) {
         const returnButton = document.createElement('button');
         returnButton.textContent = '<<';
@@ -254,6 +291,11 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(returnButton);
     }
 
+    /**
+     * Displays button to delete current note from storage.
+     * @param {HTMLElement} parent - parent element.
+     * @param {Object} note - note for deletion.
+     */
     async function displayDeleteButton(parent, note) {
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
@@ -262,6 +304,10 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(deleteButton);
     }
 
+    /**
+     * Deletes note by id from storage.
+     * @param {number} noteId - note for deletion.
+     */
     function deleteNote(noteId) {
         const existingNotes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES) || "[]");
 
@@ -272,6 +318,9 @@ async function appApplicationName(containerId, applicationName) {
         returnToMainScreen();
     }
 
+    /**
+     * Display main menu with updating current window in session cache.
+     */
     function returnToMainScreen() {
         let userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
         if (userData) {
@@ -281,6 +330,9 @@ async function appApplicationName(containerId, applicationName) {
         displayNotesScreen()
     }
 
+    /**
+     * Displays and adds main screen top menu to container.
+     */
     async function displayMainMenu() {
         const menuParent = document.createElement('div');
         menuParent.className = 'notes-menu';
@@ -302,6 +354,10 @@ async function appApplicationName(containerId, applicationName) {
 
     }
 
+    /**
+    * Displays search bar to container.
+    * @param {HTMLElement} parent - parent for insertion.
+    */
     async function displaySearchBar(parent) {
         const searchBar = document.createElement('input');
         searchBar.type = 'text';
@@ -315,6 +371,10 @@ async function appApplicationName(containerId, applicationName) {
         });
     }
 
+    /**
+    * Updates notes list in main screen according to TSQuery.
+    * @param {string} TSQuery - case sensitive search query.
+    */
     async function filterUpdateNotesList(TSQuery) {
         const notes = JSON.parse(LocalStorageWrapper.getItem(ST_KEYS.NOTES)) || [];
 
@@ -338,6 +398,11 @@ async function appApplicationName(containerId, applicationName) {
         });
     }
 
+    /**
+    * Displays text in top part of container as title.
+    * @param {HTMLElement} parent - parent container.
+    * @param {htmlCode} htmlCode - html with header or paragraph formatting.
+    */
     async function displayAppHeader(parent, htmlCode) {
         const notesHeader = document.createElement('div');
         notesHeader.className = 'notes-header';
@@ -345,6 +410,10 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(notesHeader);
     }
 
+    /**
+    * Displays import button.
+    * @param {HTMLElement} parent - parent container.
+    */
     async function displayImportButton(parent) {
         const importButton = document.createElement('button');
         importButton.textContent = 'Import';
@@ -353,6 +422,9 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(importButton);
     }
 
+    /**
+    * Creates browser default file choosing form for user.
+    */
     async function importNotes() {
         const input = document.createElement('input');
         input.type = 'file';
@@ -361,6 +433,10 @@ async function appApplicationName(containerId, applicationName) {
         input.click();
     }
 
+    
+   /**
+    *  Handles event of import file being chosen. Notes from storage replaced with imported. 
+    */
     function handleFileInputChange(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -386,6 +462,9 @@ async function appApplicationName(containerId, applicationName) {
         reader.readAsText(file);
     }
 
+    /**
+    * Validates json field of notes for storage.
+    */
     function isValidNotesFormat(notes) {
         if (!Array.isArray(notes)) {
             return false;
@@ -404,6 +483,9 @@ async function appApplicationName(containerId, applicationName) {
         return true;
     }
 
+    /**
+    * Displays notes export button.
+    */
     async function displayExportButton(parent) {
         const exportButton = document.createElement('button');
         exportButton.textContent = 'export';
@@ -412,6 +494,9 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(exportButton);
     }
 
+    /**
+    * Saves to user default browser download folder ALL notes from storage.
+    */
     async function exportNotes() {
         const notesData = LocalStorageWrapper.getItem(ST_KEYS.NOTES);
 
@@ -434,6 +519,9 @@ async function appApplicationName(containerId, applicationName) {
         alert("Notes exported successfully")
     }
 
+    /**
+    * Displays note add button.
+    */
     async function displayAddNoteButton(parent) {
         const addNoteButton = document.createElement('button');
         addNoteButton.textContent = 'add';
@@ -442,6 +530,9 @@ async function appApplicationName(containerId, applicationName) {
         parent.appendChild(addNoteButton);
     }
 
+    /**
+    * Add note to local storage.
+    */
     async function addNote() {
         const title = prompt("Enter note title:");
         if (!title.trim()) {
