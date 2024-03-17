@@ -1,14 +1,26 @@
+/**
+ * Displays app in container, this app uses session and local Web Storage API.
+ *  Warning: do not use illegal symbols in parameters – all params are used as prefixes for Web Storage keys
+ * @param {string} containerId - ID of unique container for app.
+ * @param {string} applicationName - name of application for prefix to Web Storage keys.
+ */
 async function appApplicationName(containerId, applicationName) {
 
     // инициализация главных переменных
     const container = document.getElementById(containerId);
-    const appName = appApplicationName ? appApplicationName : 'simple-notes-app'
+    const appName = applicationName ? applicationName : 'simple-notes-app'
 
     const ST_KEYS = {
         USER_DATA: 'user_data',
         NOTES: 'notes',
     };
 
+    if (!container) {
+        console.error("Элемент (контейнер для встройки) с id", containerId, "не найден.");
+        return
+    }
+
+    const localStoragePrefix = appName + '.' + container.id
 
     // Код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
     function storageAvailable(type) {
@@ -40,7 +52,7 @@ async function appApplicationName(containerId, applicationName) {
 
     // Вспомогательные функции и объекты
     const LocalStorageWrapper = {
-        prefix: appName + '.',
+        prefix: localStoragePrefix + '.',
 
         setItem(key, value) {
             localStorage.setItem(this.prefix + key, JSON.stringify(value));
@@ -66,7 +78,7 @@ async function appApplicationName(containerId, applicationName) {
     };
 
     const SessionStorageWrapper = {
-        prefix: appName + '.',
+        prefix: localStoragePrefix + '.',
 
         setItem(key, value) {
             sessionStorage.setItem(this.prefix + key, JSON.stringify(value));
@@ -92,10 +104,7 @@ async function appApplicationName(containerId, applicationName) {
     };
 
     // Основной код
-    if (!container) {
-        console.error("Элемент (контейнер для встройки) с id", containerId, "не найден.");
-        return
-    }
+
     if (!storageAvailable("localStorage")) {
         console.error("Web Storage API localStorage не поддерживается. Обеспечьте поддержку localStorage");
         return
@@ -119,13 +128,14 @@ async function appApplicationName(containerId, applicationName) {
         LocalStorageWrapper.setItem(ST_KEYS.NOTES, JSON.stringify(startNotes));
     }
 
-    userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
+    let userData = SessionStorageWrapper.getItem(ST_KEYS.USER_DATA);
     if (!userData || !userData.lastNoteId) {
         displayNotesScreen();
     } else {
-        lastNoteId = userData.lastNoteId;
+        let lastNoteId = userData.lastNoteId;
         displayNoteScreen(lastNoteId);
     }
+    // end
 
     /**
      * Displays main screen with notes.
@@ -264,7 +274,7 @@ async function appApplicationName(containerId, applicationName) {
 
     /**
      * Formats date timestamp rounded to minutes.
-     * @param {string} dateString - timestamp.
+     * @param {Date} dateString - timestamp.
      */
     function formatDate(dateString) {
         const date = new Date(dateString);
@@ -384,7 +394,7 @@ async function appApplicationName(containerId, applicationName) {
 
         filteredNotes.sort((a, b) => new Date(b.changedAt) - new Date(a.changedAt));
 
-        const notesList = document.getElementById('notes-list');
+        const notesList = document.querySelector(`#${container.id} .notes-list`);
 
         notesList.innerHTML = '';
 
@@ -401,7 +411,7 @@ async function appApplicationName(containerId, applicationName) {
     /**
     * Displays text in top part of container as title.
     * @param {HTMLElement} parent - parent container.
-    * @param {htmlCode} htmlCode - html with header or paragraph formatting.
+    * @param {string} htmlCode - html with header or paragraph formatting.
     */
     async function displayAppHeader(parent, htmlCode) {
         const notesHeader = document.createElement('div');
@@ -433,10 +443,10 @@ async function appApplicationName(containerId, applicationName) {
         input.click();
     }
 
-    
-   /**
-    *  Handles event of import file being chosen. Notes from storage replaced with imported. 
-    */
+
+    /**
+     *  Handles event of import file being chosen. Notes from storage replaced with imported. 
+     */
     function handleFileInputChange(event) {
         const file = event.target.files[0];
         if (!file) return;

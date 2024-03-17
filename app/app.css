@@ -1,5 +1,4 @@
-
-#notes-app-container {
+.notes-app-container {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     padding: 20px;
@@ -50,8 +49,8 @@
 .import-button:hover,
 .export-button:hover,
 .add-button:hover,
-.return-button::hover,
-.delete-button::hover {
+.return-button:hover,
+.delete-button:hover {
     background-color: #6e6e6e;
 }
 
@@ -129,6 +128,6 @@
     width: 100%;
     min-height: 200px;
     margin-top: 10px;
-    max-width: 500;
+    max-width: 98%;
     padding: 5px;
 }
