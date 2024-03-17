@@ -4,7 +4,7 @@
  * @param {string} containerId - ID of unique container for app.
  * @param {string} applicationName - name of application for prefix to Web Storage keys.
  */
-async function appApplicationName(containerId, applicationName) {
+async function appSimpleNotes(containerId, applicationName) {
 
     // инициализация главных переменных
     const container = document.getElementById(containerId);
