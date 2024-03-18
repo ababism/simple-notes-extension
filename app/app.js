@@ -209,7 +209,7 @@ async function appSimpleNotes(containerId, applicationName) {
     async function displayNote(note) {
         const noteContent = document.createElement('textarea');
         noteContent.classList.add('note-textarea');
-        noteContent.textContent = note.content;
+        noteContent.textContent = escapeHtml(note.content);
         noteContent.addEventListener('keydown', function (event) {
             if (event.shiftKey && event.key === 'Enter') {
                 event.preventDefault();
@@ -219,6 +219,21 @@ async function appSimpleNotes(containerId, applicationName) {
             }
         })
         container.appendChild(noteContent);
+    }
+
+    /**
+     * escape HTML entities
+     * @param {string} text - text to be sanitized.
+     */
+    function escapeHtml(text) {
+        const map = {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        };
+        return text.replace(/[&<>"']/g, function (m) { return map[m]; });
     }
 
     /**
