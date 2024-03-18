@@ -7,7 +7,7 @@
 async function appSimpleNotes(containerId, applicationName) {
 
     // инициализация главных переменных
-    const container = document.getElementById(containerId);
+    const initialContainer = document.getElementById(containerId);
     const appName = applicationName ? applicationName : 'simple-notes-app'
 
     const ST_KEYS = {
@@ -15,12 +15,17 @@ async function appSimpleNotes(containerId, applicationName) {
         NOTES: 'notes',
     };
 
-    if (!container) {
+    if (!initialContainer) {
         console.error("Элемент (контейнер для встройки) с id", containerId, "не найден.");
         return
     }
 
-    const localStoragePrefix = appName + '.' + container.id
+    const localStoragePrefix = appName + '.' + initialContainer.id
+
+    const container = document.createElement('div');
+    container.className = ('notes-app-container');
+    container.id = "notes-app-container"
+    initialContainer.appendChild(container)
 
     // Код для проверки Web Storage c https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API/Using_the_Web_Storage_API
     function storageAvailable(type) {
